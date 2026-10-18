@@ -1,0 +1,215 @@
+<?php session_start(); ?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>SNACKVERSE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<!-- ===== BACKGROUND MUSIC ===== -->
+<audio id="bgMusic"></audio>
+
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+  <h1>SNACKVERSE</h1>
+  <nav>
+    <a href="#products">Produk</a>
+    <a href="#location">Lokasi</a>
+    <a href="#" id="openCart">Keranjang</a>
+    <a href="https://arfian224.github.io/Snack2/">About Me</a>
+  </nav>
+</header>
+
+<!-- ===== WHATSAPP FLOATING ===== -->
+<a href="https://wa.me/6285711018490" target="_blank" class="cs-btn">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" width="40">
+</a>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <video autoplay muted loop playsinline>
+    <source src="assets/Restaurant food cinematic video advertisement.mp4" type="video/mp4">
+  </video>
+
+  <div class="hero-text">
+    <h2>Snack Lokal, Rasa Internasional</h2>
+    <p>Crunch. Fun. Addictive.</p>
+  </div>
+</section>
+
+<!-- ===== PRODUCTS ===== -->
+<section id="products" class="products">
+  <h2>Produk Terlaris</h2>
+
+  <div class="product-grid">
+    <div class="product">
+      <img src="assets/fianfood.jpeg">
+      <h3>Basreng Pedas</h3>
+      <p>Rp 26.500</p>
+
+        <p class="stock-info">
+    Stok Ready: <strong id="stock-basreng">...</strong>
+  </p>
+      
+<button
+  data-id="basreng"
+  data-name="Basreng Pedas"
+  data-price="26500">
+  Tambah
+</button>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== LOCATION ===== -->
+<section id="location" class="location">
+  <h2>Toko Offline</h2>
+  <iframe
+    src="https://www.google.com/maps?q=Jakarta&output=embed"
+    loading="lazy">
+  </iframe>
+</section>
+
+<!-- ===== CART PANEL ===== -->
+<div class="cart-panel" id="cartPanel">
+  <h2>Keranjang</h2>
+  <div class="cart-items"></div>
+  <div class="cart-total"></div>
+  <button class="checkout-btn">Checkout</button>
+</div>
+
+<!-- ===== CURSOR ===== -->
+<div class="cursor"></div>
+
+  
+
+
+<!-- ===== MUSIC SCRIPT ===== -->
+<script>
+const submitBtn = document.getElementById("submitOrderBtn");
+const message = document.getElementById("orderMessage");
+
+checkoutForm.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  // Ganti `cart` dengan variabel keranjang SNACKVERSE kamu.
+  const currentCart = JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
+
+  if (!currentCart.length) {
+    message.textContent = "Keranjang kamu masih kosong.";
+    return;
+  }
+
+  const formData = {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    address: document.getElementById("address").value,
+    payment: document.getElementById("payment").value,
+    website: document.getElementById("website").value,
+
+    // Kirim ID dan qty. Harga akan diperiksa di server.
+    items: currentCart.map(item => ({
+      id: String(item.id),
+      qty: Number(item.qty)
+    }))
+  };
+
+  submitBtn.disabled = true;
+  message.textContent = "Sedang menyimpan pesanan...";
+
+  google.script.run
+    .withSuccessHandler(function(result) {
+      if (!result || !result.success) {
+        message.textContent = "Pesanan belum berhasil disimpan.";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      message.textContent =
+        "Pesanan berhasil! Nomor pesanan: " + result.orderId;
+
+      localStorage.removeItem("cart");
+      checkoutForm.reset();
+      submitBtn.disabled = false;
+    })
+    .withFailureHandler(function(error) {
+      message.textContent =
+        error && error.message
+          ? error.message
+          : "Terjadi kesalahan. Silakan coba kembali.";
+
+      submitBtn.disabled = false;
+    })
+    .submitOrder(formData);
+});
+</script>  
+
+<script>
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbyhaHrTa7wRjHmRpggMmfH5o8lrvmOd4d9ZCAj-Gnqxg0Ag2-CDosqJVzrbXB2FIZ8z/exec";
+
+fetch(API_URL + "?action=products")
+  .then(response => {
+    console.log("Response:", response);
+    return response.text();
+  })
+  .then(text => {
+
+    console.log("ISI RESPONSE:");
+    console.log(text);
+
+    const result = JSON.parse(text);
+
+    console.log("JSON:", result);
+
+    const basreng =
+      result.products.find(
+        product => product.id === "basreng"
+      );
+
+    if (!basreng) {
+      document.getElementById(
+        "stock-basreng"
+      ).textContent = "Produk tidak ditemukan";
+
+      return;
+    }
+
+    document.getElementById(
+      "stock-basreng"
+    ).textContent = basreng.stock;
+
+  })
+  .catch(error => {
+
+    console.error(
+      "FETCH ERROR:",
+      error
+    );
+
+    document.getElementById(
+      "stock-basreng"
+    ).textContent = "ERROR";
+
+  });
+</script>
+<!-- ===== CORE JS ===== -->
+<script src="js/main.js"></script>
+<script src="js/cart.js"></script>
+
+<!-- ===== CINEMATIC ===== -->
+<script src="js/gsap.min.js"></script>
+<script src="js/ScrollTrigger.min.js"></script>
+<script src="js/lenis.min.js"></script>
+<script src="js/cinematic.js"></script>
+
+</body>
+</html>
