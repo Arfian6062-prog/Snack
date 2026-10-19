@@ -14,11 +14,22 @@
 
 <!-- ===== NAVBAR ===== -->
 <header class="navbar">
-  <h1>FIANFOOD</h1>
-  <nav>
+
+  <a href="#" class="logo">
+    FIANFOOD
+  </a>
+
+  <button
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="Buka menu">
+    ☰
+  </button>
+
+  <nav class="nav-menu" id="navMenu">
     <a href="#products">Produk</a>
+    <a href="cart.html">Keranjang</a>
     <a href="#location">Lokasi</a>
-    <a href="#" id="openCart">Keranjang</a>
     <a href="https://arfian6062-prog.github.io/Snack2/">About Me</a>
   </nav>
 </header>
@@ -152,7 +163,43 @@
 <div class="cursor"></div>
 
   
+<script>
+const menuToggle =
+  document.getElementById("menuToggle");
 
+const navMenu =
+  document.getElementById("navMenu");
+
+
+menuToggle.addEventListener("click", function () {
+
+  navMenu.classList.toggle("active");
+
+  if (navMenu.classList.contains("active")) {
+    menuToggle.textContent = "✕";
+  } else {
+    menuToggle.textContent = "☰";
+  }
+
+});
+
+
+/* Tutup menu setelah salah satu menu diklik */
+
+document
+  .querySelectorAll(".nav-menu a")
+  .forEach(link => {
+
+    link.addEventListener("click", function () {
+
+      navMenu.classList.remove("active");
+
+      menuToggle.textContent = "☰";
+
+    });
+
+  });
+</script>
 
 <!-- ===== MUSIC SCRIPT ===== -->
 <script>
