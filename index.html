@@ -218,53 +218,141 @@ checkoutForm.addEventListener("submit", function(event) {
 </script>  
 
 <script>
+
 const API_URL =
   "https://script.google.com/macros/s/AKfycbwCjOmryut5VBFpE7PpowXS5XBM08BVv9046VVTCoh-FeDCuxPDPyn8YXwPJOkv2ja74Q/exec";
 
-fetch(API_URL + "?action=products")
-  .then(response => {
-    console.log("Response:", response);
-    return response.text();
-  })
-  .then(text => {
 
-    console.log("ISI RESPONSE:");
-    console.log(text);
+// ==========================================
+// AMBIL STOK SEMUA PRODUK
+// ==========================================
 
-    const result = JSON.parse(text);
+async function loadStock() {
 
-    console.log("JSON:", result);
+  try {
 
-    const basreng =
-      result.products.find(
-        product => product.id === "basreng"
+    const response =
+      await fetch(
+        API_URL + "?action=products"
       );
 
-    if (!basreng) {
-      document.getElementById(
-        "stock-basreng"
-      ).textContent = "Produk tidak ditemukan";
+
+    const result =
+      await response.json();
+
+
+    console.log(
+      "DATA PRODUK:",
+      result
+    );
+
+
+    // Cek response API
+    if (!result.success) {
+
+      console.error(
+        "API ERROR:",
+        result.message
+      );
 
       return;
+
     }
 
-    document.getElementById(
-      "stock-basreng"
-    ).textContent = basreng.stock;
 
-  })
-  .catch(error => {
+    // ========================================
+    // LOOP SEMUA PRODUK
+    // ========================================
+
+    result.products.forEach(product => {
+
+      const productId =
+        String(product.id)
+          .trim()
+          .toLowerCase();
+
+
+      const stock =
+        Number(product.stock);
+
+
+      console.log(
+        productId,
+        "stok:",
+        stock
+      );
+
+
+      // ======================================
+      // CARI TULISAN STOK
+      // ======================================
+
+      const stockElement =
+        document.getElementById(
+          "stock-" + productId
+        );
+
+
+      if (stockElement) {
+
+        stockElement.textContent =
+          stock;
+
+      }
+
+
+      // ======================================
+      // CARI TOMBOL PRODUK
+      // ======================================
+
+      const button =
+        document.querySelector(
+          `[data-id="${productId}"]`
+        );
+
+
+      if (button) {
+
+        // STOK HABIS
+        if (stock <= 0) {
+
+          button.disabled = true;
+
+          button.textContent =
+            "Stok Habis";
+
+        }
+
+        // STOK TERSEDIA
+        else {
+
+          button.disabled = false;
+
+          button.textContent =
+            "Tambah";
+
+        }
+
+      }
+
+    });
+
+
+  } catch (error) {
 
     console.error(
-      "FETCH ERROR:",
+      "GAGAL MENGAMBIL STOK:",
       error
     );
 
-    document.getElementById(
-      "stock-basreng"
-    ).textContent = "ERROR";
+  }
 
-  });
+}
+
+
+// Jalankan saat website dibuka
+loadStock();
+
 </script>
 <!-- ===== CORE JS ===== -->
 <script src="js/main.js"></script>
