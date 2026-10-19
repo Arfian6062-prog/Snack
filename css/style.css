@@ -512,3 +512,60 @@ h1, h2, h3 {
   }
 
 }
+
+.cart {
+  position: relative;
+}
+
+.cart-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background: transparent;
+  color: white;
+
+  font-size: 36px;
+  line-height: 1;
+
+  cursor: pointer;
+
+  z-index: 1001;
+
+  transition: 0.2s;
+}
+
+.cart-close:hover {
+  color: #ffb800;
+  transform: scale(1.1);
+}
+
+
+/* Saat keranjang ditutup */
+.cart.cart-hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  .cart-close {
+    top: 15px;
+    right: 15px;
+
+    width: 38px;
+    height: 38px;
+
+    font-size: 32px;
+  }
+
+}
