@@ -153,13 +153,6 @@
 
 <!-- ===== CART PANEL ===== -->
 <div class="cart-panel" id="cartPanel">
-  <button
-  type="button"
-  class="cart-close"
-  id="cartClose"
-  aria-label="Tutup keranjang">
-  &times;
-</button>
   <h2>Keranjang</h2>
   <div class="cart-items"></div>
   <div class="cart-total"></div>
@@ -168,23 +161,6 @@
 
 <!-- ===== CURSOR ===== -->
 <div class="cursor"></div>
-
-<script>
-
-const cartPanel =
-  document.getElementById("cartPanel");
-
-const cartClose =
-  document.getElementById("cartClose");
-
-
-cartClose.addEventListener("click", function () {
-
-  cartPanel.classList.add("cart-hidden");
-
-});
-
-</script>
   
 <script>
 const menuToggle =
